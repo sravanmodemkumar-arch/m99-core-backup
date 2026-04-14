@@ -1,0 +1,27 @@
+# Default owner for everything
+*                              @sravan
+
+# Platform core — always requires owner review
+/packages/shared-lib/          @sravan
+/docs/                         @sravan
+/memory/                       @sravan
+
+# Exam modules — assign to specialists when team grows
+/modules/rrb-*/                @sravan
+/modules/ssc-*/                @sravan
+/modules/banking-*/            @sravan
+/modules/jee-*/                @sravan
+/modules/neet-*/               @sravan
+/modules/upsc-*/               @sravan
+/modules/state-ts-*/           @sravan
+/modules/state-ap-*/           @sravan
+/modules/teaching-*/           @sravan
+/modules/mba-*/                @sravan
+/modules/law-*/                @sravan
+/modules/school-*/             @sravan
+/modules/olympiad-*/           @sravan
+
+# CI/CD — critical, always owner review
+/.github/                      @sravan
+/turbo.json                    @sravan
+/package.json                  @sravan

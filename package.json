@@ -1,0 +1,24 @@
+{
+  "name": "mock-test-platform",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Large-scale mock test platform for India — 16-20 Cr users, 2000 tenants",
+  "workspaces": [
+    "packages/*",
+    "modules/*"
+  ],
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "test": "turbo test",
+    "lint": "turbo lint",
+    "create-module": "node scripts/create-module.js"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  }
+}

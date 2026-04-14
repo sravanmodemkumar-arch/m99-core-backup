@@ -1,0 +1,50 @@
+# Environment — never commit real values
+.env
+.env.dev
+.env.prod
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+
+# Cloudflare Workers
+.wrangler/
+wrangler.log
+
+# Turborepo cache
+.turbo/
+
+# Coverage
+coverage/
+*.lcov
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/settings.json
+.idea/
+*.suo
+*.swp
+
+# Logs
+*.log
+npm-debug.log*
+
+# Test artifacts
+test-results/
+playwright-report/
+
+# Temp
+*.tmp
+*.temp

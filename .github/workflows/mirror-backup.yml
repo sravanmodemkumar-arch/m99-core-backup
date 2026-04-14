@@ -1,0 +1,20 @@
+name: Mirror to Backup Repo
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  mirror:
+    name: Sync to backup repo
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Push mirror to backup org
+        uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url: https://github.com/mock-test-platform-backup/mock-test-platform.git
+          ssh_private_key: ${{ secrets.BACKUP_REPO_SSH_KEY }}

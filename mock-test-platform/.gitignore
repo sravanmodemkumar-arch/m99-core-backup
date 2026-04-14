@@ -1,0 +1,28 @@
+# Node
+node_modules/
+dist/
+.wrangler/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.coverage
+
+# AWS SAM
+.aws-sam/
+samconfig.toml
+
+# Env
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp

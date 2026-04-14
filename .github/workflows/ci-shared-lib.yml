@@ -1,0 +1,39 @@
+name: CI — shared-lib
+
+on:
+  push:
+    branches: [dev, main]
+    paths:
+      - 'packages/shared-lib/**'
+      - 'package.json'
+      - 'turbo.json'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'packages/shared-lib/**'
+
+jobs:
+  ci:
+    name: Test shared-lib
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Lint
+        run: npx turbo lint --filter=shared-lib
+
+      - name: Type check
+        run: npx turbo type-check --filter=shared-lib
+
+      - name: Test
+        run: npx turbo test --filter=shared-lib
+
+      - name: Build
+        run: npx turbo build --filter=shared-lib

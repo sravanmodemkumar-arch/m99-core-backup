@@ -1,0 +1,54 @@
+name: CI — Module Template
+
+# Copy this file per module:
+# e.g. ci-rrb-ntpc.yml, ci-ssc-cgl.yml
+# Replace MODULE_NAME with the actual module name
+
+on:
+  push:
+    branches: [dev, main]
+    paths:
+      - 'modules/MODULE_NAME/**'
+      - 'packages/shared-lib/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'modules/MODULE_NAME/**'
+
+jobs:
+  ci:
+    name: Test MODULE_NAME
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Lint
+        run: npx turbo lint --filter=MODULE_NAME
+
+      - name: Type check
+        run: npx turbo type-check --filter=MODULE_NAME
+
+      - name: Unit tests
+        run: npx turbo test --filter=MODULE_NAME
+
+      - name: Build
+        run: npx turbo build --filter=MODULE_NAME
+
+      - name: Integration test
+        run: npx turbo test:integration --filter=MODULE_NAME
+        env:
+          TEST_DB_URL: ${{ secrets.TEST_DB_URL }}
+
+      - name: Deploy preview (PR only)
+        if: github.event_name == 'pull_request'
+        run: npx wrangler deploy --env preview
+        working-directory: modules/MODULE_NAME
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
