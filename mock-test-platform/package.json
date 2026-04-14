@@ -5,7 +5,8 @@
   "description": "Large-scale mock test platform for India — 16-20 Cr users, 2000 tenants",
   "workspaces": [
     "packages/*",
-    "modules/*"
+    "modules/*",
+    "apps/*"
   ],
   "scripts": {
     "dev": "turbo dev",

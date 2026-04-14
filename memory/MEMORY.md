@@ -24,6 +24,7 @@
 | [change-design.md](change-design.md) | What changes vs what is locked — volatile in config, stable in code, migration rules, ADRs |
 | [feedback-memory-before-git.md](feedback-memory-before-git.md) | Rule: update memory ONLY immediately before git push — not mid-task |
 | [rrb-group-d-module.md](rrb-group-d-module.md) | First implemented module (v1.0.0) — canonical file layout, API routes, TSF structure, patterns |
+| [client-sync-strategy.md](client-sync-strategy.md) | Batch sync: 4 results OR 24h, checked on app open; web=IndexedDB, mobile=expo-sqlite, desktop=SQLite |
 
 ## Exam Catalog — Individual Sub-modules (exams/)
 

@@ -20,24 +20,49 @@ Repo: `sravanmodemkumar-arch/m99-core` → `modules/rrb-group-d/`
 
 ## File Layout (canonical — all modules follow this)
 
+Flat structure. Max 3 levels deep. No subfolders inside backend/ or frontend/.
+
 ```
 modules/rrb-group-d/
-  ├── package.json          — deps, vitest + wrangler devDeps, "rrb-group-d" name
-  ├── wrangler.toml         — CF Worker config, KV namespaces, R2, D.O., dev/prod envs
-  ├── CHANGELOG.md          — semver history
-  ├── src/
-  │   ├── config.js         — EXAM_PATTERN, Q_STATE, TEST_STATUS, EVENT_PRIORITY, PALETTE_LEGEND
-  │   ├── tsf-builder.js    — buildTSF(), startTest(), saveAnswer(), clearAnswer(), toggleFlag(), getQuestionState()
-  │   ├── marking-engine.js — computeResult(tsf, answer_key), previewScore(tsf)
-  │   ├── tenant-config.js  — resolveTenantConfig(), checkModuleAccess(), resolveModuleVersion()
-  │   ├── theme.js          — full RRB CBT color palette + button labels (en/hi) + layout dims
-  │   └── index.js          — CF Worker entry: error boundary + 8 routes
-  └── tests/
-      ├── tsf-builder.test.js    — 9 test cases
-      └── marking-engine.test.js — 7 test cases
+  ├── backend/                   — CF Worker JSON API (flat, max 6 files)
+  │   ├── worker.js              — entry point + router
+  │   ├── config.js              — EXAM_PATTERN, Q_STATE, TEST_STATUS, EVENT_PRIORITY
+  │   ├── tsf.js                 — TSF builder
+  │   ├── marking.js             — scoring (exact 1/3, no rounding)
+  │   ├── tenant.js              — 3-level tenant resolution
+  │   └── theme.js               — RRB CBT colors + layout
+  ├── frontend/                  — web UI (HTMX + Tailwind CDN, flat, max 5 files)
+  │   ├── index.html             — exam shell
+  │   ├── app.js                 — timer, palette, navigation
+  │   ├── storage.js             — IndexedDB result queue
+  │   ├── sync.js                — batch flush (4 results OR 24h)
+  │   └── sw.js                  — service worker
+  ├── mobile/                    — React Native screens
+  │   ├── ExamScreen.js          — full exam UI
+  │   ├── ResultScreen.js        — score + section breakdown
+  │   ├── components/
+  │   │   ├── QuestionCard.js
+  │   │   ├── Palette.js         — bottom-sheet (phone) / sidebar (tablet)
+  │   │   ├── Timer.js
+  │   │   └── ActionBar.js
+  │   ├── services/
+  │   │   ├── api.js             — calls this module's CF Worker
+  │   │   ├── storage.js         — expo-sqlite result queue
+  │   │   └── sync.js            — 4 results OR 24h flush
+  │   └── utils/
+  │       └── layout.js          — isTablet = width >= 768
+  ├── desktop/                   — Electron (v2, placeholder)
+  ├── tests/                     — flat
+  │   ├── marking.test.js        — 7 test cases
+  │   └── tsf.test.js            — 9 test cases
+  ├── package.json
+  ├── wrangler.toml              — main="backend/worker.js", [assets] dir="./frontend"
+  └── CHANGELOG.md
 ```
 
-## API Routes (index.js — 8 routes)
+**Current state in repo:** old `src/` layout. Next task: restructure to this layout.
+
+## API Routes (worker.js — 8 routes + 1 batch route)
 
 | Method | Path | What it does |
 |---|---|---|

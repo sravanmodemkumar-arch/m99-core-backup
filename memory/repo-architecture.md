@@ -8,26 +8,67 @@ type: project
 
 Single repo. Each module acts independently via Turborepo tooling.
 
+**Local project root:** `/home/sravan/Desktop/projects/mock-test-platform/`
+**Git repo root:** `/home/sravan/Desktop/projects/` (one level up — memory/ stays here)
+
 ```
-m99-core/
-  ├── packages/
-  │   └── shared-lib/         ← core library, versioned independently
+mock-test-platform/          ← actual project root
   ├── modules/
-  │   ├── rrb-group-d/        ← JSON API + business logic ONLY (no UI)
-  │   ├── rrb-ntpc/           ← own package.json, own CI, own CF Worker
-  │   ├── ssc-cgl/
+  │   ├── app-shell/         ← login, home, navigation (treated as a module)
+  │   │   ├── mobile/        ← App.js, HomeScreen.js, LoginScreen.js
+  │   │   ├── desktop/       ← desktop shell (v2)
+  │   │   └── package.json
+  │   ├── rrb-group-d/       ← fully self-contained across ALL platforms
+  │   │   ├── backend/       ← CF Worker JSON API (flat, max 6 files)
+  │   │   ├── frontend/      ← web: HTMX + Tailwind CDN (flat, max 5 files)
+  │   │   ├── mobile/        ← React Native screens for this module
+  │   │   ├── desktop/       ← Electron UI for this module (v2)
+  │   │   ├── tests/         ← flat test files
+  │   │   ├── package.json
+  │   │   └── wrangler.toml
+  │   ├── rrb-ntpc/          ← same 5-folder structure
+  │   ├── ssc-cgl/           ← same 5-folder structure
   │   └── ... (50+ modules)
-  ├── apps/
-  │   ├── web/                ← ONE browser app for ALL exam modules
-  │   ├── mobile/             ← ONE React Native app (phone + tablet)
-  │   └── desktop/            ← ONE desktop app (v2, later)
-  ├── memory/
+  ├── cf-workers/            ← platform-level CF Workers (auth, EIS)
+  ├── lambda/                ← AWS Lambda services
   ├── docs/
-  ├── turbo.json
-  └── .github/workflows/      ← per-module CI workflows
+  ├── packages/              ← empty (no shared-lib ever)
+  ├── package.json           ← workspaces: modules/*
+  └── turbo.json
 ```
 
-**Why Turborepo:** Only rebuilds/tests affected modules. PR touching rrb-ntpc → only rrb-ntpc CI runs. shared-lib change → all module CIs run (dependency graph).
+**No apps/ directory.** Everything lives inside `modules/`.
+**app-shell** is a module like any other — login + home + navigation for mobile/desktop.
+**No shared-lib.** Each module is 100% independent across all platforms.
+**Naming rule:** `backend/` = CF Worker API, `frontend/` = web, `mobile/` = RN, `desktop/` = Electron.
+
+## Per-Module Folder Rule
+
+Every exam module has exactly these folders:
+
+| Folder | Purpose | Platform |
+|---|---|---|
+| `backend/` | CF Worker JSON API | Server |
+| `frontend/` | HTMX + Tailwind CDN | Browser |
+| `mobile/` | React Native screens | iOS + Android + Tablet |
+| `desktop/` | Electron UI (v2) | Windows + Mac + Linux |
+| `tests/` | Vitest test files | CI |
+
+## How Mobile App Works
+
+`app-shell/mobile/App.js` is the React Native root.
+It imports exam screens from each module's `mobile/` folder:
+
+```js
+// app-shell/mobile/App.js
+import RRBGroupDExam from '../../rrb-group-d/mobile/ExamScreen'
+import RRBNTPCExam   from '../../rrb-ntpc/mobile/ExamScreen'
+```
+
+One installed app. Each module contributes its own screens.
+Navigation lives in app-shell. Exam UI lives in each module.
+
+**Why Turborepo:** Only rebuilds/tests affected modules. PR touching rrb-ntpc → only rrb-ntpc CI runs. No shared-lib means no cascade failures.
 
 ## Repo Name
 

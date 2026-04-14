@@ -85,29 +85,116 @@ modules/
           └── interview/
 ```
 
-## Shared Library (packages/shared-lib/)
+## No Shared Library — Each Module Is Fully Independent
 
-Global module = shared library imported by all exam modules. NOT a running service.
+**Decision (2026-04-14):** No shared-lib package. Every exam module owns its full stack.
 
-| Component | Purpose |
-|---|---|
-| tsf-schema | TypeScript types for Test Session File |
-| question-renderer | Plugin registry — renders all question types |
-| timer-engine | Global + sectional countdown, grace period |
-| marking-engine | Score computation, partial marking |
-| event-emitter | Sends P0–P7 events to EIS |
-| state-manager | Reads/writes TSF state to localStorage + expo-sqlite |
-| sync-engine | Online real-time / offline batch flush |
-| ui-shell | Header, palette, bottom bar, sidebar layout |
-| provider-adapters | Storage, cache, queue — swappable per provider |
-| compliance | DPDP consent, erasure, audit logging |
-| entitlements | Feature/module access per tenant |
+**Why:**
+- Shared-lib version mismatch breaks all modules at once
+- One change in shared-lib forces testing of all 50+ modules
+- Each exam module independently deployable with zero coordination
+- HTMX + Tailwind loaded from public CDN per module — no npm deps for UI
 
-Each exam module imports shared-lib and provides:
-- Its own TSF config (pattern, sections, marking)
-- Its own theme
-- Its own sub-module routing
-- Its own error boundary
+Each module duplicates what it needs (marking engine, TSF builder, timer logic).
+Duplication is intentional — independence is worth it at this scale.
+
+## Module = Complete Vertical Slice
+
+**Flat structure — max 3 levels deep from module root. No subfolders inside backend/ or frontend/.**
+
+```
+modules/rrb-group-d/
+  backend/              ← CF Worker (JSON API) — max 6 flat files
+    worker.js           ← entry point + router (was index.js)
+    config.js           ← exam pattern (sections, marking, timing)
+    tsf.js              ← TSF create/update (was tsf-builder.js)
+    marking.js          ← scoring, exact 1/3 (was marking-engine.js)
+    tenant.js           ← 3-level tenant resolution (was tenant-config.js)
+    theme.js            ← colors matching real exam interface
+  frontend/             ← Static UI (HTMX + Tailwind CDN) — max 5 flat files
+    index.html          ← exam shell
+    app.js              ← timer, palette, navigation
+    storage.js          ← IndexedDB: result queue + meta
+    sync.js             ← batch flush: 4 results OR 24h
+    sw.js               ← service worker
+  tests/                ← flat, named after what they test
+    marking.test.js
+    tsf.test.js
+  package.json
+  wrangler.toml         ← main="backend/worker.js" + [assets] dir="./frontend"
+  CHANGELOG.md
+```
+
+CF Worker serves BOTH:
+- JSON API routes (`/config`, `/session`, `/:id/answer`, `/results/batch`)
+- Static frontend assets from `frontend/` via `[assets]` binding
+
+HTMX + Tailwind loaded from public CDN in `index.html` — zero build step, zero npm deps for UI.
+
+## Naming Conventions (short names)
+
+| Old name | New name | Reason |
+|---|---|---|
+| `index.js` | `worker.js` | Immediately clear it's the CF Worker entry |
+| `tsf-builder.js` | `tsf.js` | Shorter, still obvious |
+| `marking-engine.js` | `marking.js` | Shorter |
+| `tenant-config.js` | `tenant.js` | Shorter |
+| `src/` | `backend/` | Unambiguous — backend vs frontend |
+| `ui/` | `frontend/` | Unambiguous |
+
+## No apps/ Directory
+
+Everything lives inside `modules/`. There is no top-level `apps/` folder.
+
+```
+modules/
+  app-shell/            ← login, home screen, navigation (one module)
+    mobile/
+      App.js            ← React Native root + navigation
+      HomeScreen.js     ← lists available exam modules
+      LoginScreen.js    ← auth
+    desktop/            ← Electron shell (v2)
+    package.json
+
+  rrb-group-d/          ← exam module: owns ALL its platform UIs
+    backend/            ← CF Worker API
+    frontend/           ← web (HTMX + Tailwind CDN)
+    mobile/             ← React Native screens for this exam
+      ExamScreen.js     ← exam UI (question, palette, timer)
+      ResultScreen.js   ← result display
+    desktop/            ← Electron UI (v2)
+    tests/
+    package.json
+    wrangler.toml
+```
+
+## Mobile Folder Structure (per module)
+
+```
+rrb-group-d/mobile/
+  ExamScreen.js         ← full exam UI (question, palette, timer, action bar)
+  ResultScreen.js       ← score, section breakdown
+  components/           ← module-specific components only
+    QuestionCard.js
+    Palette.js          ← phone: bottom-sheet | tablet: sidebar
+    Timer.js
+    ActionBar.js
+  services/
+    api.js              ← calls this module's CF Worker API
+    storage.js          ← expo-sqlite (result queue)
+    sync.js             ← 4 results OR 24h flush
+  utils/
+    layout.js           ← isTablet = width >= 768
+```
+
+## Desktop Folder Structure (per module) — v2
+
+```
+rrb-group-d/desktop/
+  ExamWindow.js         ← Electron renderer for exam
+  ResultWindow.js
+  package.json
+```
 
 ## Isolation Levels
 
