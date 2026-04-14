@@ -1,0 +1,41 @@
+name = "rrb-group-d"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Routes — tenant slug prefix
+# e.g. allen.m99-core.com/exam/rrb-group-d/*
+routes = [
+  { pattern = "*/*.m99-core.com/exam/rrb-group-d/*", zone_name = "m99-core.com" }
+]
+
+# KV namespaces
+[[kv_namespaces]]
+binding  = "TENANT_KV"
+id       = ""          # fill after wrangler kv:namespace create
+preview_id = ""
+
+[[kv_namespaces]]
+binding  = "MODULE_REGISTRY"
+id       = ""
+preview_id = ""
+
+# R2 bucket (question content)
+[[r2_buckets]]
+binding    = "CONTENT_BUCKET"
+bucket_name = "m99-content-primary"
+preview_bucket_name = "m99-content-dev"
+
+# Durable Objects (batch event writer — 1 per tenant group)
+[[durable_objects.bindings]]
+name       = "BATCH_DO"
+class_name = "BatchWriter"
+
+# Environments
+[env.dev]
+name = "rrb-group-d-dev"
+vars = { PLATFORM_NAME = "m99-dev", ENV = "dev", LOG_LEVEL = "debug" }
+
+[env.prod]
+name = "rrb-group-d"
+vars = { PLATFORM_NAME = "m99-core", ENV = "prod", LOG_LEVEL = "error" }
