@@ -53,7 +53,7 @@ export const EXAM_PATTERN = {
   marking: {
     default: {
       correct     : 1,
-      wrong       : 0.33,   // -1/3 negative marking
+      wrong       : 1/3,   // exact -1/3 negative marking — never use 0.33
       unattempted : 0,
     },
   },

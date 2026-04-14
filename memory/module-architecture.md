@@ -4,10 +4,46 @@ description: Exam module isolation, sub-module structure, shared-lib, module reg
 type: project
 ---
 
+## Implementation Status
+
+| Module | Status | Version | Committed |
+|---|---|---|---|
+| rrb-group-d | ✅ COMPLETE | v1.0.0 | dev branch, 2026-04-14 |
+| rrb-ntpc | planned | — | — |
+| rrb-je | planned | — | — |
+| rrb-alp | planned | — | — |
+
+`rrb-group-d` is the reference implementation — all future modules follow its file structure.
+
 ## Core Principle
 
 One exam = one module. One stage within an exam = one sub-module.
 If one sub-module fails, other sub-modules and all other exam modules keep running.
+
+## Platform Architecture Decision
+
+**Platforms (web/mobile/desktop) are NOT sub-modules inside exam modules.**
+
+```
+WRONG ✗
+modules/rrb-group-d/sub-modules/web/
+modules/rrb-group-d/sub-modules/mobile/
+modules/rrb-group-d/sub-modules/desktop/
+→ 50 exams × 3 platforms = 150 sub-modules of duplicate UI code
+
+CORRECT ✓
+modules/rrb-group-d/    ← JSON API + business logic only
+apps/web/               ← ONE app, reads any module's API
+apps/mobile/            ← ONE app (phone + tablet), reads any module's API
+apps/desktop/           ← ONE app (v2), reads any module's API
+```
+
+**Why:** Timer, palette, navigation, submit — identical across all exams.
+Only colors and config differ per exam — those come from `GET /config` at runtime.
+Tablet = mobile with wider layout (palette_cols: 8, split view) — not a separate sub-module.
+
+Sub-modules inside an exam module are for **exam stages only**
+(e.g. ntpc-cbt1, ntpc-cbt2, alp-cbt1, alp-cbt2a, alp-cbt2b).
 
 ## Module Structure
 

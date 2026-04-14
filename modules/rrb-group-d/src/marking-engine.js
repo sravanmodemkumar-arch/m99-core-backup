@@ -1,7 +1,11 @@
 /**
  * Marking Engine — RRB Group D
- * Score = Σ correct(+1) − Σ wrong(×0.33)
+ * Score = Σ correct(+1) − Σ wrong(×1/3)
  * Unattempted = 0 (never penalized)
+ *
+ * Full floating-point precision preserved throughout.
+ * No mid-calculation rounding — only the display layer rounds.
+ * Competitive exam rank calculation requires exact values.
  *
  * Runs client-side at submit preview + server-side for final score.
  * Both must produce identical results — deterministic, no randomness.
@@ -55,8 +59,8 @@ export function computeResult(tsf, answer_key) {
     per_question[qno] = { status, earned, student, correct }
   }
 
-  // Round to 2 decimal places (avoid floating point drift)
-  score = Math.round(score * 100) / 100
+  // No rounding — full precision for rank computation.
+  // Display layer rounds for candidate view (e.g. toFixed(2)).
 
   return {
     score,
@@ -65,7 +69,7 @@ export function computeResult(tsf, answer_key) {
     unattempted_count,
     total_q       : questions.length,
     max_marks     : tsf.marking.default.correct * questions.length,
-    percentage    : Math.round((score / (tsf.marking.default.correct * questions.length)) * 100 * 100) / 100,
+    percentage    : (score / (tsf.marking.default.correct * questions.length)) * 100,
     per_section   : computeSectionScores(tsf, per_question),
     per_question,
     computed_at   : new Date().toISOString(),
@@ -93,7 +97,7 @@ function computeSectionScores(tsf, per_question) {
       sid          : section.sid,
       label        : section.label,
       subject      : section.subject,
-      score        : Math.round(s_score * 100) / 100,
+      score        : s_score,   // full precision — no rounding
       correct      : s_correct,
       wrong        : s_wrong,
       unattempted  : s_unattempted,

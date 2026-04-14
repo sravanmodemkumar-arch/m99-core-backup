@@ -4,14 +4,16 @@ description: Always update local memory files before running any git push — no
 type: feedback
 ---
 
-Always update all relevant memory files in `/memory/` BEFORE running any git push or git commit.
+Update memory files ONLY immediately before a git push — not mid-task, not after every decision.
 
-**Why:** Memory files are the single source of truth for all architectural decisions, rules, and project context. Stale memory = wrong context in future sessions = decisions that contradict agreed architecture.
+**Why:** Mid-task memory updates are wasteful and interrupt flow. The right trigger is: "about to push" → update memory → then push. This was corrected explicitly.
 
 **How to apply:**
-1. Before any `git add` / `git commit` / `git push` — check if any decisions were made in the session
-2. If yes — update or create relevant memory files in `/home/sravan/Desktop/projects/memory/` first
-3. Only after memory is updated — proceed with git operations
-4. Applies even for small pushes — if a decision was discussed, it must be in memory first
+1. Work through the full task normally — do NOT update memory during the work
+2. Only when `git push` is imminent — check what decisions/patterns were established this session
+3. Update or create relevant memory files in `/home/sravan/Desktop/projects/memory/` at that point
+4. Then commit + push. Memory update counts as part of the push checklist.
 
-**Memory location:** `/home/sravan/Desktop/projects/memory/` (local only, not global Claude memory)
+**What NOT to do:** Update memory in the middle of a session unprompted, or every time a file is created.
+
+**Memory location:** `/home/sravan/Desktop/projects/memory/` (local project memory only — never global Claude memory at ~/.claude/)

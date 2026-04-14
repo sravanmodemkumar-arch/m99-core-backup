@@ -22,7 +22,8 @@
 | [tenant-architecture.md](tenant-architecture.md) | 3-level config hierarchy, PLATFORM_NAME env, tenant naming, RBAC roles, entitlements |
 | [enterprise-standards.md](enterprise-standards.md) | Idempotency, API versioning, DPDP compliance, audit log, anti-cheat, SLOs, load testing, incidents |
 | [change-design.md](change-design.md) | What changes vs what is locked — volatile in config, stable in code, migration rules, ADRs |
-| [feedback-memory-before-git.md](feedback-memory-before-git.md) | Rule: always update memory files before any git push |
+| [feedback-memory-before-git.md](feedback-memory-before-git.md) | Rule: update memory ONLY immediately before git push — not mid-task |
+| [rrb-group-d-module.md](rrb-group-d-module.md) | First implemented module (v1.0.0) — canonical file layout, API routes, TSF structure, patterns |
 
 ## Exam Catalog — Individual Sub-modules (exams/)
 

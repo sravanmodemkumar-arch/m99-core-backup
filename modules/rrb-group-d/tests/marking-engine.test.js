@@ -32,11 +32,11 @@ describe('Marking Engine — RRB Group D', () => {
     expect(result.per_question[1].earned).toBe(1)
   })
 
-  it('wrong answer scores -0.33', () => {
+  it('wrong answer scores -1/3 (exact)', () => {
     const tsf = saveAnswer(DUMMY_TSF, 1, ['A'])
     const result = computeResult(tsf, ANSWER_KEY)
     expect(result.per_question[1].status).toBe('wrong')
-    expect(result.per_question[1].earned).toBe(-0.33)
+    expect(result.per_question[1].earned).toBeCloseTo(-1/3, 10)
   })
 
   it('unattempted scores 0', () => {
@@ -56,29 +56,29 @@ describe('Marking Engine — RRB Group D', () => {
     expect(result.wrong_count).toBe(0)
   })
 
-  it('all wrong = -33 marks', () => {
+  it('all wrong = -100/3 marks (exact, not -33)', () => {
     let tsf = DUMMY_TSF
     for (let q = 1; q <= 100; q++) {
       tsf = saveAnswer(tsf, q, ['A']) // all wrong
     }
     const result = computeResult(tsf, ANSWER_KEY)
-    expect(result.score).toBe(-33)
+    expect(result.score).toBeCloseTo(-100/3, 10) // -33.3333...
     expect(result.wrong_count).toBe(100)
   })
 
-  it('score is never below -33 for 100 wrongs', () => {
+  it('100 wrong scores within exact -1/3 range', () => {
     let tsf = DUMMY_TSF
     for (let q = 1; q <= 100; q++) tsf = saveAnswer(tsf, q, ['D'])
     const result = computeResult(tsf, ANSWER_KEY)
-    expect(result.score).toBeGreaterThanOrEqual(-34) // rounding tolerance
+    expect(result.score).toBeCloseTo(-100/3, 10)
   })
 
-  it('section scores sum to total score', () => {
+  it('section scores sum to total score (full precision)', () => {
     let tsf = DUMMY_TSF
     for (let q = 1; q <= 50; q++) tsf = saveAnswer(tsf, q, ['B'])
     const result = computeResult(tsf, ANSWER_KEY)
     const sectionTotal = result.per_section.reduce((sum, s) => sum + s.score, 0)
-    expect(Math.round(sectionTotal * 100)).toBe(Math.round(result.score * 100))
+    expect(sectionTotal).toBeCloseTo(result.score, 10)
   })
 
   it('preview shows unanswered count', () => {

@@ -9,14 +9,18 @@ type: project
 Single repo. Each module acts independently via Turborepo tooling.
 
 ```
-mock-test-platform/
+m99-core/
   ├── packages/
   │   └── shared-lib/         ← core library, versioned independently
   ├── modules/
+  │   ├── rrb-group-d/        ← JSON API + business logic ONLY (no UI)
   │   ├── rrb-ntpc/           ← own package.json, own CI, own CF Worker
-  │   ├── rrb-group-d/
   │   ├── ssc-cgl/
-  │   └── ... (150+ modules)
+  │   └── ... (50+ modules)
+  ├── apps/
+  │   ├── web/                ← ONE browser app for ALL exam modules
+  │   ├── mobile/             ← ONE React Native app (phone + tablet)
+  │   └── desktop/            ← ONE desktop app (v2, later)
   ├── memory/
   ├── docs/
   ├── turbo.json
@@ -27,7 +31,8 @@ mock-test-platform/
 
 ## Repo Name
 
-- **Git repo name:** `mock-test-platform` (permanent, never changes)
+- **Git repo name:** `m99-core` (obfuscated, not searchable in public)
+- **Backup repo:** `m99-core-backup`
 - **Brand name:** `PLATFORM_NAME` env var (changes everywhere in app)
 - **Tenant name:** KV config per tenant (overrides PLATFORM_NAME in UI)
 
@@ -36,14 +41,27 @@ Never hardcode the brand name in code. Always read from env.
 ## Branch Strategy (Solo Dev)
 
 ```
-main    ← protected, CI must pass, no direct push
-dev     ← daily working branch, push freely
-prod    ← auto-managed by CI only (tags + deployment record)
-feature/* ← short-lived, optional
-hotfix/* ← emergency, fast-track to main + dev
+main      ← protected, CI must pass, no direct push
+dev       ← integration branch — never push feature work directly here
+prod      ← auto-managed by CI only (tags + deployment record)
+feature/* ← REQUIRED for every new module, fix, or update
+hotfix/*  ← emergency only, fast-track to main + dev
 ```
 
-**Flow:** dev → PR → CI passes + preview deploy → merge to main → tag → prod deploy
+**Every change gets its own feature branch.** No exceptions.
+
+```
+# correct flow
+git checkout -b feature/rrb-group-d-marking-fix
+# ... work ...
+git push origin feature/rrb-group-d-marking-fix
+# PR → dev → CI passes → merge → delete branch
+
+# correct flow for new module
+git checkout -b feature/rrb-ntpc-module
+```
+
+**Flow:** feature/* → PR → CI passes → merge to dev → PR → merge to main → tag → prod deploy
 
 **No GitFlow.** No qa branch. No release branches. CI is the gatekeeper.
 
