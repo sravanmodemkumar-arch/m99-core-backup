@@ -1,6 +1,10 @@
 name = "rrb-group-d"
-main = "src/index.js"
+main = "backend/worker.js"
 compatibility_date = "2024-01-01"
+
+# Serve fe/web/ as static assets (HTMX + Tailwind shell)
+[assets]
+directory = "./fe/web"
 compatibility_flags = ["nodejs_compat"]
 
 # Routes — tenant slug prefix

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { buildTSF, startTest, saveAnswer, clearAnswer, toggleFlag, getQuestionState } from '../src/tsf-builder.js'
-import { EXAM_PATTERN, Q_STATE, TEST_STATUS } from '../src/config.js'
+import { buildTSF, startTest, saveAnswer, clearAnswer, toggleFlag, getQuestionState } from '../backend/tsf.js'
+import { EXAM_PATTERN, Q_STATE, TEST_STATUS } from '../backend/config.js'
 
 const DUMMY_QIDS = Array.from({ length: 100 }, (_, i) =>
   `MATH-01-01-S-M-C-${String(i + 1).padStart(6, '0')}`

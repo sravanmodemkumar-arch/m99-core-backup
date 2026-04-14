@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { computeResult, previewScore } from '../src/marking-engine.js'
-import { buildTSF, saveAnswer } from '../src/tsf-builder.js'
+import { computeResult, previewScore } from '../backend/marking.js'
+import { buildTSF, saveAnswer } from '../backend/tsf.js'
 
 // 100 dummy QIDs for testing
 const DUMMY_QIDS = Array.from({ length: 100 }, (_, i) =>

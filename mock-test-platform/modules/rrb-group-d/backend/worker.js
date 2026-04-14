@@ -15,9 +15,9 @@
  */
 
 import { EXAM_PATTERN, MODULE_ID, MODULE_VERSION } from './config.js'
-import { buildTSF, startTest, saveAnswer, clearAnswer, toggleFlag, previewScore } from './tsf-builder.js'
-import { computeResult, previewScore as markingPreview } from './marking-engine.js'
-import { resolveTenantConfig, checkModuleAccess, resolveModuleVersion } from './tenant-config.js'
+import { buildTSF, startTest, saveAnswer, clearAnswer, toggleFlag, previewScore } from './tsf.js'
+import { computeResult, previewScore as markingPreview } from './marking.js'
+import { resolveTenantConfig, checkModuleAccess, resolveModuleVersion } from './tenant.js'
 
 // ─── Main Handler ─────────────────────────────────────────────────────────────
 
