@@ -203,3 +203,37 @@ v3.5 → Durable Objects (live proctoring / leaderboards)
 ```
 
 No rewrites at any step. Every activation = flip KV flag + fill stub.
+
+---
+
+## SAM Environment Variables (tune without deploy)
+
+```yaml
+TGM_MIN_TENANTS: "20"
+TGM_USER_THRESHOLD: "50000"
+EPS_CHUNK_SIZE: "100"
+BATCH_SIZE: "4"
+FLUSH_HOURS: "24"
+```
+
+---
+
+## Key Architectural Decisions
+
+| Decision | Rule |
+|---|---|
+| Auth is a separate module | `modules/auth/` — identity only, knows nothing about exam modules |
+| app-shell = composition root | Only file allowed to import across modules |
+| Platform lambdas shared | BS/EPS/TPS serve ALL modules — never duplicated per module |
+| fe/shared/ per module | Shared only within that module — not cross-module |
+| No shared library across modules | Each module owns all code. No `packages/shared/` |
+| CF Workers never touch DB | Workers use KV + R2 only. Only Lambda touches RDS |
+| Exact 1/3 negative marking | `wrong: 1/3` in config.js — no Math.round mid-calc |
+| Batch sync rule | 4 results OR 24h — checked on page load / app foreground |
+| Wrangler serves `./fe` | Web at `/web/`, shared at `/shared/` |
+| Custom domains via CF for SaaS | CNAME → m99-core.com. KV: `domain:{host}` → tenant_id |
+| Client handles exam logic | Scoring, state, navigation client-side. Server validates + stores |
+| KV for routing + flags only | Never store mutable user data in KV |
+| Append-only results | INSERT only. PK: `(uid, qid, attempt_no)` |
+| tenant_id on all tables | Future-proof for schema → shared-DB migration |
+| pg_host resolved dynamically | Never hardcoded. Fetched from global tenants table per invocation |
