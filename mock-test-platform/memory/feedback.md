@@ -21,11 +21,12 @@
 4. `feature/auth/backend` → commit
 5. `feature/auth/web` → commit
 6. `feature/auth/mobile` → commit → merge auth to dev
-7. `feature/rrb-group-d/shared` (scoring + qstate + components) → commit
+7. `feature/rrb-group-d/shared` (scoring + qstate + UI components) → commit
 8. `feature/rrb-group-d/backend` → commit
-9. `feature/rrb-group-d/web` → commit
-10. `feature/rrb-group-d/mobile` → commit → merge rrb-group-d to dev
-11. `feature/app-shell/navigation` → commit → merge to dev
+9. `feature/rrb-group-d/web` (responsive: mobile/tablet/desktop) → commit
+10. `feature/rrb-group-d/mobile` (phone + tablet layouts) → commit
+11. `feature/rrb-group-d/desktop` (Electron shell) → commit → merge rrb-group-d to dev
+12. `feature/app-shell/navigation` → commit → merge to dev
 
 ## UI Rules (every session)
 - Ultra pro level — high-stakes exam, stressed students, ₹8000 phones

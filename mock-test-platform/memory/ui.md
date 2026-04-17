@@ -5,6 +5,15 @@ Ultra pro level. 50+ years of educational product experience.
 Students take high-stakes govt exams (RRB, SSC) on mid-range Android phones.
 Zero distraction. Zero confusion. Instant feedback. Works on ₹8000 phones.
 
+## Platform Targets (ALL three — every module)
+| Platform | Tech | Responsive targets |
+|---|---|---|
+| Web | HTMX + Tailwind CDN | Mobile <640px · Tablet 640–1024px · Desktop >1024px |
+| Mobile | React Native (Expo) | Phone <768px (bottom-sheet palette) · Tablet ≥768px (split view) |
+| Desktop | Electron | Full window, sidebar always visible, wraps web renderer |
+
+**Rule:** Every module ships all three. Desktop is NOT a stub — active v1.
+
 ## Color System
 ```css
 --bg:           #F8FAFC   /* slate-50 — easy on eyes, not stark white */
@@ -87,10 +96,24 @@ Numbers:   tabular-nums feature
 ⊞ = slide-up drawer, 60% screen height
 ```
 
-## Tablet Layout
+## Tablet Layout (Mobile ≥768px)
 - Split view: question (flex-2) left, palette (flex-1) right — always visible
 - No drawer needed
 - `isTablet()`: width >= 768px
+
+## Web Responsive Breakpoints
+```
+Mobile  <640px  : single column, bottom action bar, palette hidden behind button
+Tablet  640–1024px : two-column (question + palette), section tabs scroll-x
+Desktop >1024px : same as tablet + wider question panel, fixed sidebar
+```
+
+## Desktop (Electron)
+- Electron shell loads the web `fe/web/` renderer via `loadURL`
+- `main.js` — creates BrowserWindow, sets min size 1024×700
+- `preload.js` — exposes `electron.platform` to renderer
+- No separate desktop-specific FE code — web responsive handles it
+- Desktop `fe/desktop/`: `main.js`, `preload.js`, `package.json`
 
 ## Shared UI Component Library
 Location: `fe/shared/components/` inside each module.

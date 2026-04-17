@@ -19,9 +19,9 @@ Cost: ₹5–10/user/yr → ₹0.10 at scale
 | DB v1 | Single RDS PostgreSQL, schema-per-tenant, no proxy |
 | DB v2+ | RDS Proxy → schema groups → shared-DB-with-tenant_id |
 | Migrations | Alembic per-schema, run in TPS |
-| Web FE | HTMX + Tailwind CDN (no build step) |
-| Mobile FE | React Native (Expo) |
-| Desktop | Electron (v2 stub) |
+| Web FE | HTMX + Tailwind CDN, fully responsive (mobile/tablet/desktop) |
+| Mobile FE | React Native (Expo), phone + tablet layouts |
+| Desktop | Electron — wraps web renderer, active v1 (not stub) |
 | Tests | Vitest (JS) + Pytest (Python) |
 | Deploy | Wrangler (CF) + AWS SAM (Lambda) |
 
@@ -63,9 +63,9 @@ mock-test-platform/
         ├── fe/
         │   ├── shared/     ← scoring.js, qstate.js
         │   ├── shared/components/  ← copy-paste UI library (Table, Modal, Drawer…)
-        │   ├── web/        ← index.html, app.js, storage.js, sync.js, sw.js
-        │   ├── mobile/     ← ExamScreen, ResultScreen, components/, services/, utils/
-        │   └── desktop/    ← stub
+        │   ├── web/        ← index.html, app.js, storage.js, sync.js, sw.js (responsive: mobile/tablet/desktop)
+        │   ├── mobile/     ← ExamScreen, ResultScreen, components/, services/, utils/ (phone + tablet)
+        │   └── desktop/    ← main.js, preload.js, package.json (Electron, wraps web)
         ├── tests/
         ├── package.json
         └── wrangler.toml
